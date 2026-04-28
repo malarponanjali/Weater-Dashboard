@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather Dashboard</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #74ebd5, #ACB6E5);
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 300px;
+        margin: auto;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    input {
+        padding: 10px;
+        width: 80%;
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px;
+        width: 100%;
+        cursor: pointer;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .weather-box {
+        margin-top: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🌦️ Weather Dashboard</h2>
+
+    <input type="text" id="cityInput" placeholder="Enter city name">
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div id="weatherResult" class="weather-box"></div>
+</div>
+
+<script>
+const apiKey = "YOUR_API_KEY"; // 🔑 Replace with your API key
+
+async function getWeather() {
+    const city = document.getElementById("cityInput").value;
+    const resultDiv = document.getElementById("weatherResult");
+
+    if (!city) {
+        resultDiv.innerHTML = "⚠️ Please enter a city name!";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+        );
+
+        if (!response.ok) {
+            throw new Error("❌ City not found!");
+        }
+
+        const data = await response.json();
+
+        // Dynamic UI update
+        resultDiv.innerHTML = `
+            <h3>${data.name}</h3>
+            <p>🌡️ Temp: ${data.main.temp} °C</p>
+            <p>☁️ Weather: ${data.weather[0].description}</p>
+            <p>💧 Humidity: ${data.main.humidity}%</p>
+            <p>🌬️ Wind: ${data.wind.speed} m/s</p>
+        `;
+    } catch (error) {
+        // Error handling
+        resultDiv.innerHTML = `<p style="color:red;">${error.message}</p>`;
+    }
+}
+</script>
+
+</body>
+</html>
